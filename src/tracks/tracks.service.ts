@@ -25,11 +25,11 @@ export class TracksService {
     return this.trackRepository.findOneBy({ id })
   }
 
-  async update(id: number, updateTrackDto: UpdateTrackDto): Promise<Track | null > {
-    const track = await this.trackRepository.findOneBy({ id });
-    if (!track) return null;
-    const updatedTrack = this.trackRepository.merge(track, updateTrackDto);
-    return await this.trackRepository.save(updatedTrack);
+  async update(id: number, updateTrackDto: UpdateTrackDto): Promise<Track | null> {
+    const { id: _ignored, ...rest } = updateTrackDto as any;
+    const result = await this.trackRepository.update(id, rest);
+    if (result.affected === 0) return null;
+    return this.findOne(id);
   }
 
   async remove(id: number): Promise<void> {

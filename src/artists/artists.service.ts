@@ -26,10 +26,10 @@ export class ArtistsService {
   }
 
   async update(id: number, updateArtistDto: UpdateArtistDto): Promise<Artist | null> {
-    const artist = await this.artistRepository.findOneBy({ id });
-    if (!artist) return null;
-    const updatedArtist = this.artistRepository.merge(artist, updateArtistDto);
-    return await this.artistRepository.save(updatedArtist);
+    const { id: _ignored, ...rest } = updateArtistDto as any;
+    const result = await this.artistRepository.update(id, rest);
+    if (result.affected === 0) return null;
+    return this.findOne(id);
   }
 
   async remove(id: number): Promise<void> {
