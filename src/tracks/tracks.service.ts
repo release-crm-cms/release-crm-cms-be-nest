@@ -12,8 +12,9 @@ export class TracksService {
     private trackRepository: Repository<Track>
   ) { }
 
-  create(createTrackDto: CreateTrackDto) {
-    return 'This action adds a new track';
+  async create(createTrackDto: CreateTrackDto): Promise<Track> {
+    const track = this.trackRepository.create(createTrackDto);
+    return await this.trackRepository.save(track);
   }
 
   findAll(): Promise<Track[]> {
