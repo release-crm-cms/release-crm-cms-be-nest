@@ -25,8 +25,11 @@ export class TracksService {
     return this.trackRepository.findOneBy({ id })
   }
 
-  update(id: number, updateTrackDto: UpdateTrackDto) {
-    return `This action updates a #${id} track`;
+  async update(id: number, updateTrackDto: UpdateTrackDto): Promise<Track | null > {
+    const track = await this.trackRepository.findOneBy({ id });
+    if (!track) return null;
+    const updatedTrack = this.trackRepository.merge(track, updateTrackDto);
+    return await this.trackRepository.save(updatedTrack);
   }
 
   async remove(id: number): Promise<void> {
