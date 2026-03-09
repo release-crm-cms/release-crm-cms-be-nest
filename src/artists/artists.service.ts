@@ -12,23 +12,27 @@ export class ArtistsService {
     private artistRepository: Repository<Artist>,
   ) { }
 
-  create(createArtistDto: CreateArtistDto) {
-    return 'This action adds a new artist';
+  async create(createArtistDto: CreateArtistDto): Promise<Artist> {
+    const artist = this.artistRepository.create(createArtistDto);
+    return await this.artistRepository.save(artist);
   }
 
-  findAll() {
-    return `This action returns all artists`;
+  async findAll(): Promise<Artist[]> {
+    return this.artistRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} artist`;
+  findOne(id: number): Promise<Artist | null> {
+    return this.artistRepository.findOneBy({ id });
   }
 
-  update(id: number, updateArtistDto: UpdateArtistDto) {
-    return `This action updates a #${id} artist`;
+  async update(id: number, updateArtistDto: UpdateArtistDto): Promise<Artist | null> {
+    const artist = await this.artistRepository.findOneBy({ id });
+    if (!artist) return null;
+    const updatedArtist = this.artistRepository.merge(artist, updateArtistDto);
+    return await this.artistRepository.save(updatedArtist);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} artist`;
+  async remove(id: number): Promise<void> {
+    await this.artistRepository.delete(id);
   }
 }
