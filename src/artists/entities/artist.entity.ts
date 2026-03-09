@@ -11,18 +11,18 @@ export class Artist {
     @Column()
     legalName: string;
 
-    @Column()
+    @Column({ nullable: true })
     bio: string;
 
-    @Column()
+    @Column({ nullable: true })
     image: string;
 
-    @Column()
+    @Column({ nullable: true })
     website: string;
 
-    @Column()
+    @Column({ nullable: true })
     email: string;
-    
-    @Column()
+
+    @Column({ nullable: true })
     phone: string;
 }
