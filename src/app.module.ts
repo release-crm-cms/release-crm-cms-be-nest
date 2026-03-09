@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { TracksModule } from './tracks/tracks.module';
 import { Track } from './tracks/entities/track.entity';
 import { ArtistsModule } from './artists/artists.module';
+import { Artist } from './artists/entities/artist.entity';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ArtistsModule } from './artists/artists.module';
       database: 'release_crm_cms',
       entities: [
         Track,
+        Artist,
       ],
       synchronize: true, // TODO: `synchronize: true` shouldn't be used in production - otherwise you can lose production data.
     }),
