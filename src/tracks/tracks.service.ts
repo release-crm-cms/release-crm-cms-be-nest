@@ -16,19 +16,19 @@ export class TracksService {
     return 'This action adds a new track';
   }
 
-  findAll() {
-    return `This action returns all tracks`;
+  findAll(): Promise<Track[]> {
+    return this.trackRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} track`;
+  findOne(id: number): Promise<Track | null> {
+    return this.trackRepository.findOneBy({ id })
   }
 
   update(id: number, updateTrackDto: UpdateTrackDto) {
     return `This action updates a #${id} track`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} track`;
+  async remove(id: number): Promise<void> {
+    await this.trackRepository.delete(id);
   }
 }
