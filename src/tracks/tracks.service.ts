@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -24,19 +24,28 @@ export class TracksService {
     return this.trackRepository.find();
   }
 
-  findOne(id: number): Promise<Track | null> {
-    return this.trackRepository.findOneBy({ id })
+  async findOne(id: number): Promise<Track> {
+    const track = await this.trackRepository.findOneBy({ id });
+    if (!track) {
+      throw new NotFoundException(`Track with id ${id} not found`);
+    }
+    return track;
   }
 
-  async update(id: number, updateTrackDto: UpdateTrackDto): Promise<Track | null> {
+  async update(id: number, updateTrackDto: UpdateTrackDto): Promise<Track> {
     const { id: _ignored, ...rest } = updateTrackDto as any;
     const result = await this.trackRepository.update(id, rest);
-    if (result.affected === 0) return null;
+    if (result.affected === 0) {
+      throw new NotFoundException(`Track with id ${id} not found`);
+    }
     return this.findOne(id);
   }
 
   async remove(id: number): Promise<void> {
-    await this.trackRepository.delete(id);
+    const result = await this.trackRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Track with id ${id} not found`);
+    }
   }
 
   async findArtists(trackId: number): Promise<Artist[]> {
@@ -44,7 +53,10 @@ export class TracksService {
       where: { id: trackId },
       relations: ['artists'],
     });
-    return track?.artists ?? [];
+    if (!track) {
+      throw new NotFoundException(`Track with id ${trackId} not found`);
+    }
+    return track.artists ?? [];
   }
 
   async addArtist(trackId: number, artistId: number): Promise<Artist[] | null> {
@@ -52,10 +64,14 @@ export class TracksService {
       where: { id: trackId },
       relations: ['artists'],
     });
-    if (!track) return null;
+    if (!track) {
+      throw new NotFoundException(`Track with id ${trackId} not found`);
+    }
 
     const artist = await this.artistRepository.findOne({ where: { id: artistId } });
-    if (!artist) return null;
+    if (!artist) {
+      throw new NotFoundException(`Artist with id ${artistId} not found`);
+    }
 
     const alreadyLinked = track.artists?.some((a) => a.id === artist.id);
     if (!alreadyLinked) {
@@ -70,7 +86,9 @@ export class TracksService {
       where: { id: trackId },
       relations: ['artists'],
     });
-    if (!track) return null;
+    if (!track) {
+      throw new NotFoundException(`Track with id ${trackId} not found`);
+    }
 
     track.artists = (track.artists ?? []).filter((a) => a.id !== artistId);
     await this.trackRepository.save(track);
