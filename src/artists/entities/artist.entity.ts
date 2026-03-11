@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Track } from "../../tracks/entities/track.entity";
 
 @Entity()
 export class Artist {
@@ -25,4 +26,7 @@ export class Artist {
 
     @Column({ nullable: true })
     phone: string;
+
+    @ManyToMany(() => Track, (track) => track.artists)
+    tracks: Track[];
 }

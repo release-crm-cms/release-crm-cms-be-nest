@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Artist } from '../../artists/entities/artist.entity';
 
 @Entity()
 export class Track {
@@ -13,4 +14,8 @@ export class Track {
 
   @Column()
   year: number;
+
+  @ManyToMany(() => Artist, (artist) => artist.tracks)
+  @JoinTable()
+  artists: Artist[];
 }
