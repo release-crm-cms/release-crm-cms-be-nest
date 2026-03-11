@@ -31,4 +31,25 @@ export class TracksController {
   remove(@Param('id') id: string) {
     return this.tracksService.remove(+id);
   }
+
+  @Get(':id/artists')
+  findArtists(@Param('id') id: string) {
+    return this.tracksService.findArtists(+id);
+  }
+
+  @Post(':id/artists/:artistId')
+  addArtist(
+    @Param('id') id: string,
+    @Param('artistId') artistId: string,
+  ) {
+    return this.tracksService.addArtist(+id, +artistId);
+  }
+
+  @Delete(':id/artists/:artistId')
+  removeArtist(
+    @Param('id') id: string,
+    @Param('artistId') artistId: string,
+  ) {
+    return this.tracksService.removeArtist(+id, +artistId);
+  }
 }
