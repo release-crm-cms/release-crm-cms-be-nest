@@ -31,4 +31,9 @@ export class ArtistsController {
   remove(@Param('id') id: string) {
     return this.artistsService.remove(+id);
   }
+
+  @Get(':id/tracks')
+  findTracks(@Param('id') id: string) {
+    return this.artistsService.findTracks(+id);
+  }
 }
