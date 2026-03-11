@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
@@ -24,19 +24,28 @@ export class ArtistsService {
     return this.artistRepository.find();
   }
 
-  findOne(id: number): Promise<Artist | null> {
-    return this.artistRepository.findOneBy({ id });
+  async findOne(id: number): Promise<Artist> {
+    const artist = await this.artistRepository.findOneBy({ id });
+    if (!artist) {
+      throw new NotFoundException(`Artist with id ${id} not found`);
+    }
+    return artist;
   }
 
-  async update(id: number, updateArtistDto: UpdateArtistDto): Promise<Artist | null> {
+  async update(id: number, updateArtistDto: UpdateArtistDto): Promise<Artist> {
     const { id: _ignored, ...rest } = updateArtistDto as any;
     const result = await this.artistRepository.update(id, rest);
-    if (result.affected === 0) return null;
+    if (result.affected === 0) {
+      throw new NotFoundException(`Artist with id ${id} not found`);
+    }
     return this.findOne(id);
   }
 
   async remove(id: number): Promise<void> {
-    await this.artistRepository.delete(id);
+    const result = await this.artistRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Artist with id ${id} not found`);
+    }
   }
 
   async findTracks(artistId: number): Promise<Track[]> {
@@ -44,6 +53,9 @@ export class ArtistsService {
       where: { id: artistId },
       relations: ['tracks'],
     });
-    return artist?.tracks ?? [];
+    if (!artist) {
+      throw new NotFoundException(`Artist with id ${artistId} not found`);
+    }
+    return artist.tracks ?? [];
   }
 }
