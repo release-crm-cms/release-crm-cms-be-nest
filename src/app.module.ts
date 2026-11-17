@@ -1,31 +1,20 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TracksModule } from './tracks/tracks.module';
 import { Track } from './tracks/entities/track.entity';
 import { ArtistsModule } from './artists/artists.module';
 import { Artist } from './artists/entities/artist.entity';
+import config from './mikro-orm.config'; // your ORM config
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'postgres',
-      database: 'release_crm_cms',
-      entities: [
-        Track,
-        Artist,
-      ],
-      synchronize: true, // TODO: `synchronize: true` shouldn't be used in production - otherwise you can lose production data.
-    }),
-    TracksModule,
-    ArtistsModule,
+    MikroOrmModule.forRoot(config),
+    // TracksModule,
+    // ArtistsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

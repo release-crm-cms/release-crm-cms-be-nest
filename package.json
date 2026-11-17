@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@mikro-orm/cli": "^7.0.0",
     "@mikro-orm/core": "^7.0.0",
     "@mikro-orm/nestjs": "^6.1.2",
     "@mikro-orm/postgresql": "^7.0.0",

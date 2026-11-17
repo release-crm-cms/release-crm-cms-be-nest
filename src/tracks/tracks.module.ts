@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { TracksService } from './tracks.service';
 import { TracksController } from './tracks.controller';
 import { Track } from './entities/track.entity';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Track])],
+  imports: [MikroOrmModule.forFeature({ entities: [Track] })],
   controllers: [TracksController],
   providers: [TracksService],
 })

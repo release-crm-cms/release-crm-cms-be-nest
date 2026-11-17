@@ -1,28 +1,28 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 
 @Entity()
 export class Artist {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryKey()
+  id!: number;
 
-    @Column()
-    name: string;
+  @Property()
+  name!: string;
 
-    @Column()
-    legalName: string;
+  @Property()
+  legalName!: string;
 
-    @Column({ nullable: true })
-    bio: string;
+  @Property({ nullable: true })
+  bio?: string;
 
-    @Column({ nullable: true })
-    image: string;
+  @Property({ nullable: true })
+  image?: string;
 
-    @Column({ nullable: true })
-    website: string;
+  @Property({ nullable: true })
+  website?: string;
 
-    @Column({ nullable: true })
-    email: string;
+  @Property({ nullable: true })
+  email?: string;
 
-    @Column({ nullable: true })
-    phone: string;
+  @Property({ nullable: true })
+  phone?: string;
 }

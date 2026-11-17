@@ -1,38 +1,48 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { EntityRepository } from '@mikro-orm/core';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ArtistsService {
   constructor(
     @InjectRepository(Artist)
-    private artistRepository: Repository<Artist>,
+      private readonly artistRepository: EntityRepository<Artist>,
   ) { }
 
   async create(createArtistDto: CreateArtistDto): Promise<Artist> {
     const artist = this.artistRepository.create(createArtistDto);
-    return await this.artistRepository.save(artist);
+      await this.artistRepository.persistAndFlush(artist);
+      return artist;
   }
 
   async findAll(): Promise<Artist[]> {
-    return this.artistRepository.find();
+      return this.artistRepository.findAll();
   }
 
-  findOne(id: number): Promise<Artist | null> {
-    return this.artistRepository.findOneBy({ id });
+    async findOne(id: number): Promise<Artist | null> {
+      return this.artistRepository.findOne({ id });
   }
 
   async update(id: number, updateArtistDto: UpdateArtistDto): Promise<Artist | null> {
-    const { id: _ignored, ...rest } = updateArtistDto as any;
-    const result = await this.artistRepository.update(id, rest);
-    if (result.affected === 0) return null;
-    return this.findOne(id);
+      const artist = await this.artistRepository.findOne({ id });
+      if (!artist) {
+        return null;
+      }
+
+      const { id: _ignored, ...rest } = updateArtistDto as any;
+      this.artistRepository.assign(artist, rest);
+      await this.artistRepository.flush();
+      return artist;
   }
 
   async remove(id: number): Promise<void> {
-    await this.artistRepository.delete(id);
+      const artist = await this.artistRepository.findOne({ id });
+      if (!artist) {
+        return;
+      }
+      await this.artistRepository.removeAndFlush(artist);
   }
 }

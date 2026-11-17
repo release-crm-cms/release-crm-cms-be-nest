@@ -1,16 +1,16 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 
 @Entity()
 export class Track {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryKey()
+  id!: number;
 
-  @Column()
-  title: string;
+  @Property()
+  title!: string;
 
-  @Column()
-  artistString: string;
+  @Property()
+  artistString!: string;
 
-  @Column()
-  year: number;
+  @Property()
+  year!: number;
 }
